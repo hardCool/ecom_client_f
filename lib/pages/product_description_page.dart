@@ -80,6 +80,7 @@ class ProductDescriptionPage extends StatelessWidget {
                         item: product.name ?? '',
                         description: product.description ?? '',
                       );
+                      print('buy now tapped');
                     },
                     child: Text(
                       'Buy Now',

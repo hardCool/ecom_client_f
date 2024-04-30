@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'dart:io' show Platform;
 
 class PurchaseController extends GetxController {
   TextEditingController addressController = TextEditingController();
@@ -29,42 +30,52 @@ class PurchaseController extends GetxController {
     required String item,
     required String description,
   }) {
-    orderPrice = price;
-    itemName = item;
-    orderAddress = addressController.text;
-    print('$orderPrice, $itemName, $orderAddress');
+    // Check if the platform is Android before initiating payment
+    if (Platform.isAndroid) {
+      orderPrice = price;
+      itemName = item;
+      orderAddress = addressController.text;
+      print('$orderPrice, $itemName, $orderAddress');
 
-    var options = {
-      'key': 'rzp_test_GKRdYcSKqY1qb8', // Replace with your actual Razorpay key
-      'amount': (price * 100).toInt(),
-      'name': item,
-      'description': description,
-      // Add additional options as needed
-    };
+      var options = {
+        'key': 'rzp_test_GKRdYcSKqY1qb8', // Replace with your actual Razorpay key
+        'amount': (price * 100).toInt(),
+        'name': item,
+        'description': description,
+        // Add additional options as needed
+      };
 
-    try {
-      _razorpay.open(options);
-    } catch (e) {
-      print('Error initiating payment: $e');
+      try {
+        _razorpay.open(options);
+      } catch (e) {
+        print('Error initiating payment: $e');
+      }
+    } else {
+      // Show an error message or handle unsupported platform scenario
+      print('Razorpay payment is not supported on this platform.');
     }
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    // Handle payment success
     print('Payment Successful: ${response.paymentId}');
-    Get.snackbar("Success!", "Payment Completed Successfully",
-        snackPosition: SnackPosition.BOTTOM); // Show a Getx Snackbar
+    Get.snackbar(
+      "Success!",
+      "Payment Completed Successfully",
+      snackPosition: SnackPosition.BOTTOM,
+    );
   }
 
+
   void _handlePaymentError(PaymentFailureResponse response) {
-    // Handle payment failure
     print('Payment Failed: ${response.message}');
-    Get.snackbar("Error!", "Payment Failed: ${response.message}",
-        snackPosition: SnackPosition.BOTTOM); // Show a Getx Snackbar
+    Get.snackbar(
+      "Error!",
+      "Payment Failed: ${response.message}",
+      snackPosition: SnackPosition.BOTTOM,
+    );
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
-    // Handle external wallet selection
     print('External Wallet: ${response.walletName}');
   }
 }

@@ -28,6 +28,8 @@ android {
     namespace "com.example.e_com_app_fir"
     compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
+    minSdkVersion 21
+
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
